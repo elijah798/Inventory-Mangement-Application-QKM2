@@ -64,7 +64,7 @@ public class AddProductForm implements Initializable {
 
         Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
         stage.hide();
-        System.out.println("Add Part Form Closed");
+        System.out.println("Add Product Form Closed");
     }
 
 

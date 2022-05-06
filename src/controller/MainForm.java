@@ -160,7 +160,18 @@ public class MainForm implements Initializable{
         partFormWindow.show();
     }
 
-    public void onButtonModifyProduct(ActionEvent actionEvent) {
+    public void onButtonModifyProduct(ActionEvent actionEvent) throws IOException {
+        Stage partFormWindow = new Stage();
+        partFormWindow.setTitle("Modify Product");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ModifyProductForm.fxml"));
+
+
+        partFormWindow.setScene(new Scene(loader.load()));
+        ModifyProductForm controller = loader.getController();
+
+        controller.setProduct(productTable.getSelectionModel().getSelectedItem());
+        controller.setPartList(inventory.getAllParts());
+        partFormWindow.show();
     }
 
     public void onButtonProductDeletePart(ActionEvent actionEvent) {
