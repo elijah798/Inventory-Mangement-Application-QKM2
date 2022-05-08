@@ -16,22 +16,68 @@ import java.util.ResourceBundle;
 
 import static controller.MainForm.inventory;
 
+/**
+ * Add Part Form
+ *
+ *
+ */
 public class addPartForm implements Initializable {
 
+    /**
+     * The Id.
+     */
     public int ID;
+    /**
+     * The Part source.
+     */
     public Label partSource;
+    /**
+     * The ToggleGroup for the Radio Buttons.
+     */
     public ToggleGroup TG;
+    /**
+     * The In house Radio Button.
+     */
     public RadioButton inHouse;
+    /**
+     * The Out sourced Radio Button.
+     */
     public RadioButton outSourced;
+    /**
+     * The Name field.
+     */
     public TextField NameField;
+    /**
+     * The Stock field.
+     */
     public TextField StockField;
+    /**
+     * The Price field.
+     */
     public TextField PriceField;
+    /**
+     * The Max field.
+     */
     public TextField MaxField;
+    /**
+     * The Min field.
+     */
     public TextField minField;
+    /**
+     * The Machine id.
+     */
     public TextField MachineId;
+    /**
+     * The Id field.
+     */
     public TextField IdField;
 
 
+    /**
+     * Closes the AddPartForm without any new part being created.
+     *
+     *
+     */
     public void onButtonCancel(ActionEvent actionEvent) {
 
         Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
@@ -57,6 +103,12 @@ public class addPartForm implements Initializable {
 
 
     }
+
+    /**
+     * Get id int.
+     *
+     * @return A Unique ID to be used by the part.
+     */
     public int getID(){
 
         Random randID = new Random();
@@ -70,6 +122,11 @@ public class addPartForm implements Initializable {
         return id;
     }
 
+    /**
+     * Validate Form Inputs.
+     *
+     * @return A boolean that is true when all forms are correctly inputted or false when incorrectly.
+     */
     public boolean validate(){
 
 
@@ -133,6 +190,11 @@ public class addPartForm implements Initializable {
         return true;
     }
 
+    /**
+     * Creates new Part and adds it to the inventory.
+     *
+     *
+     */
     public void onButtonSave(ActionEvent actionEvent){
 
         if(inHouse.isSelected() && validate()){
