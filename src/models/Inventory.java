@@ -57,12 +57,21 @@ public class Inventory {
     }
 
     public void updatePart(int index, Part selectedPart){
-        allParts.remove(allParts.get(index));
-        allParts.add(selectedPart);
+        if(selectedPart != null){
+            allParts.set(index,selectedPart);
+            //allParts.add(selectedPart);
+        }else{
+            allParts.remove(allParts.get(index));
+        }
+
     }
     public void updateProduct(int index, Product selectedProduct){
-        allProducts.remove(allProducts.get(index));
-        allProducts.add(selectedProduct);
+        if(selectedProduct != null){
+            allProducts.set(index, selectedProduct);
+        }else{
+            allProducts.remove(allProducts.get(index));
+        }
+
     }
 
     public ObservableList<Part> getAllParts(){

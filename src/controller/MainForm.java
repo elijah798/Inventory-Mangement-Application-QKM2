@@ -18,7 +18,9 @@ import models.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
+
 
 
 public class MainForm implements Initializable{
@@ -35,6 +37,7 @@ public class MainForm implements Initializable{
     public TableColumn tableProductName;
     public TableColumn tableProductStock;
     public TableColumn tableProductPrice;
+    public TextField productSearchBar;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -44,9 +47,14 @@ public class MainForm implements Initializable{
         InHouse part3 = new InHouse(3,"part3",1.5,6,0,1,3);
 
         Product Product1 = new Product(1,"Company 1", 200.0, 1, 1,5);
+
         Product Product2 = new Product(2,"Company 2", 20.0, 2, 2,12);
+
         Product Product3 = new Product(3,"Company 3", 2.0, 3, 5,50);
 
+
+
+        System.out.println("Product3 has parts: " + Product3.getAllAssociatedParts());
         inventory.addPart(part1);
         inventory.addPart(part2);
         inventory.addPart(part3);
@@ -72,6 +80,7 @@ public class MainForm implements Initializable{
 
 
 
+
     }
 
     @FXML
@@ -84,20 +93,28 @@ public class MainForm implements Initializable{
         partFormWindow.setTitle("Add Part");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AddPartForm.fxml"));
         partFormWindow.setScene(new Scene(loader.load()));
+
+
         partFormWindow.show();
     }
 
     public void onButtonModifyPart(ActionEvent actionEvent) throws IOException {
+        partTable.refresh();
         System.out.println("Modify Part Opened");
         Stage ModifypartFormWindow = new Stage();
         ModifypartFormWindow.setTitle("Modify Part");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ModifyPartForm.fxml"));
         ModifypartFormWindow.setScene(new Scene(loader.load()));
-        modifyPartForm ModifyController = loader.<modifyPartForm>getController();
+        modifyPartForm controller = loader.getController();
+
+        controller.setCurrentPart(partTable.getSelectionModel().getSelectedItem());
+
         if(partTable.getSelectionModel().getSelectedItem().getClass() == InHouse.class){
-            ModifyController.setFields((InHouse) partTable.getSelectionModel().getSelectedItem());
+            controller.setFields((InHouse) partTable.getSelectionModel().getSelectedItem());
+
         }else{
-            ModifyController.setFields((Outsourced) partTable.getSelectionModel().getSelectedItem());
+            controller.setFields((Outsourced) partTable.getSelectionModel().getSelectedItem());
+
         }
 
         ModifypartFormWindow.show();
@@ -107,8 +124,8 @@ public class MainForm implements Initializable{
 
         if(!inventory.getAllParts().isEmpty()){
 
-            partTable.getItems().set(partTable.getSelectionModel().getSelectedItem().getId()-1,null);
-            partTable.setItems(inventory.getAllParts());
+            System.out.println("Removing " + partTable.getSelectionModel().getSelectedItem().getName());
+            inventory.updatePart(inventory.getAllParts().indexOf(partTable.getSelectionModel().getSelectedItem()) ,null);
 
             System.out.println("Table refreshed");
         }else{
@@ -124,7 +141,7 @@ public class MainForm implements Initializable{
 
 
         partTable.setItems(null);
-        System.out.println("Table cleared");
+
 
         //test for valid entry
         if(PartSearchBar.getText().isEmpty()){
@@ -134,13 +151,23 @@ public class MainForm implements Initializable{
                 partTable.refresh();
 
         } else if(PartSearchBar.getText().matches("[0-9]+") && inventory.lookupPart(Integer.parseInt(PartSearchBar.getText())) != null){
+            String searchTerm = PartSearchBar.getText();
+            for (Part Parts: inventory.getAllParts()){
+                if (Integer.toString(Parts.getId()).startsWith(PartSearchBar.getText())){
+                    searchResults.add(Parts);
+                }
+            }
 
-            Part searchItem = inventory.lookupPart(Integer.parseInt(PartSearchBar.getText()));
-            searchResults.add(searchItem);
-            inventory.lookupPart(searchItem + " Was added");
             partTable.setItems(searchResults);
-            partTable.refresh();
-            System.out.println(inventory.lookupPart(searchItem + " Was added"));
+
+
+        } else  {
+            for (Part Parts: inventory.getAllParts()){
+                if (Parts.getName().toLowerCase().startsWith(PartSearchBar.getText().toLowerCase())){
+                    searchResults.add(Parts);
+                }
+            }
+            partTable.setItems(searchResults);
 
         }
 
@@ -170,17 +197,17 @@ public class MainForm implements Initializable{
         ModifyProductForm controller = loader.getController();
 
         controller.setProduct(productTable.getSelectionModel().getSelectedItem());
+        System.out.println(productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts() + "   ----------   This is from main controller");
         controller.setPartList(inventory.getAllParts());
         partFormWindow.show();
     }
 
     public void onButtonProductDeletePart(ActionEvent actionEvent) {
+        productTable.setItems(inventory.getAllProducts());
 
         if(!inventory.getAllProducts().isEmpty()){
-
-            productTable.getItems().set(productTable.getSelectionModel().getSelectedItem().getId()-1,null);
-            productTable.setItems(inventory.getAllProducts());
-            System.out.println("Table refreshed");
+            System.out.println("Removing " + productTable.getSelectionModel().getSelectedItem().getName());
+            inventory.updateProduct(inventory.getAllProducts().indexOf(productTable.getSelectionModel().getSelectedItem()) ,null);
 
         }else{
 
@@ -188,5 +215,41 @@ public class MainForm implements Initializable{
 
         }
 
+    }
+
+    public void onProductSearchEntry(ActionEvent actionEvent) {
+        ObservableList<Product> searchResults = FXCollections.observableArrayList();
+
+
+        productTable.setItems(null);
+
+
+        //test for valid entry
+        if(productSearchBar.getText().isEmpty()){
+
+            productTable.setItems(null);
+            productTable.setItems(inventory.getAllProducts());
+            productTable.refresh();
+
+        } else if(productSearchBar.getText().matches("[0-9]+") && inventory.lookupProduct(Integer.parseInt(productSearchBar.getText())) != null){
+            String searchTerm = productSearchBar.getText();
+            for (Product Products: inventory.getAllProducts()){
+                if (Integer.toString(Products.getId()).startsWith(productSearchBar.getText())){
+                    searchResults.add(Products);
+                }
+            }
+
+            productTable.setItems(searchResults);
+
+
+        } else  {
+            for (Product Products: inventory.getAllProducts()){
+                if (Products.getName().toLowerCase().startsWith(productSearchBar.getText().toLowerCase())){
+                    searchResults.add(Products);
+                }
+            }
+            productTable.setItems(searchResults);
+
+        }
     }
 }

@@ -14,8 +14,12 @@ import models.Outsourced;
 import models.Part;
 import models.Product;
 
+import static controller.MainForm.inventory;
+
 public class ModifyProductForm {
+
     public Product product;
+    private  Product currentProduct;
     public TextField ProductId;
     public TextField ProductName;
     public TextField ProductStock;
@@ -33,32 +37,33 @@ public class ModifyProductForm {
     public TableColumn tablePartStock;
     public TableColumn tablePartPrice;
 
-    public ObservableList<Part> partList;
+    public ObservableList<Part> partList = FXCollections.observableArrayList();
     public ObservableList<Part> asPartList = FXCollections.observableArrayList();
 
-    public void onButtonAddPart(ActionEvent actionEvent) {
 
-        if(PartTable.getSelectionModel().getSelectedItem().getClass() == InHouse.class){
-            asPartList.add((InHouse) PartTable.getSelectionModel().getSelectedItem());
-        }else{
-            asPartList.add((Outsourced) PartTable.getSelectionModel().getSelectedItem());
+
+    public void onButtonAddPart(ActionEvent actionEvent) {
+        if(PartTable.getSelectionModel().getSelectedItem() != null) {
+            if (PartTable.getSelectionModel().getSelectedItem().getClass() == InHouse.class) {
+                product.addAssociatedPart((InHouse) PartTable.getSelectionModel().getSelectedItem());
+            } else {
+                product.addAssociatedPart((Outsourced) PartTable.getSelectionModel().getSelectedItem());
+            }
         }
 
-        this.partList.remove(PartTable.getSelectionModel().getSelectedItem());
-        PartTable.refresh();
-        asPartTable.setItems(asPartList);
+
 
     }
 
     public void OnButtonRemovePart(ActionEvent actionEvent) {
         if(asPartTable.getSelectionModel().getSelectedItem() != null){
             if(asPartTable.getSelectionModel().getSelectedItem().getClass() == InHouse.class){
-                partList.add((InHouse) asPartTable.getSelectionModel().getSelectedItem());
+                product.deleteAssociatedPart((InHouse) asPartTable.getSelectionModel().getSelectedItem());
             }else{
-                partList.add((Outsourced) asPartTable.getSelectionModel().getSelectedItem());
+                product.deleteAssociatedPart((Outsourced) asPartTable.getSelectionModel().getSelectedItem());
             }
 
-            this.asPartList.remove(asPartTable.getSelectionModel().getSelectedItem());
+
 
         }
     }
@@ -70,12 +75,12 @@ public class ModifyProductForm {
         product.setMax(Integer.parseInt(ProductMax.getText()));
         product.setMin(Integer.parseInt(ProductMin.getText()));
         product.setPrice(Double.parseDouble(ProductPrice.getText()));
-        for (Part part : asPartList) {
-            product.addAssociatedPart(part);
-        }
-        for (Part part : partList) {
-            product.deleteAssociatedPart(part); 
-        }
+
+        inventory.updateProduct(inventory.getAllProducts().indexOf(currentProduct), product);
+
+
+            Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
+            stage.hide();
 
 
     }
@@ -94,17 +99,39 @@ public class ModifyProductForm {
         tablePartStock.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
 
         this.partList = FXCollections.observableArrayList(parts);
+
         PartTable.setItems(partList);
-        System.out.println(partList + "These parts are now in the List");
-    }
+        }
+
+
+
+
+
 
     public void setProduct(Product product){
-        this.product = product;
+        this.currentProduct = product;
+        this.product = new Product(product.getId(),product.getName(),product.getPrice(), product.getStock(),product.getMin(),product.getMax());
+        for(Part part: product.getAllAssociatedParts()){
+            this.product.addAssociatedPart(part);
+        }
+
+
         ProductId.setText(Integer.toString(product.getId()));
+        ProductName.setText(product.getName());
+        ProductStock.setText(Integer.toString(product.getStock()));
+        ProductPrice.setText(Double.toString(product.getPrice()));
+        ProductMax.setText(Integer.toString(product.getMax()));
+        ProductMin.setText(Integer.toString(product.getMin()));
+
+
         asPartID.setCellValueFactory(new PropertyValueFactory<Part, Integer>("id"));
         asPartName.setCellValueFactory(new PropertyValueFactory<Part, String>("name"));
         asPartPrice.setCellValueFactory(new PropertyValueFactory<Part, Double>("price"));
         asPartStock.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
+
+        asPartList = this.product.getAllAssociatedParts();
         asPartTable.setItems(this.product.getAllAssociatedParts());
     }
+
+
 }

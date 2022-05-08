@@ -60,29 +60,29 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField disable="true" layoutX="154.0" layoutY="107.0" promptText="Auto Gen - Disabled" fx:id="Id"/>
+            <TextField fx:id="Id" disable="true" layoutX="170.0" layoutY="107.0" promptText="Auto Gen - Disabled" />
             <Label layoutX="74.0" layoutY="152.0" prefHeight="18.0" prefWidth="38.0" text="Name">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="NameField" layoutX="154.0" layoutY="148.0" />
+            <TextField fx:id="NameField" layoutX="170.0" layoutY="148.0" />
             <Label layoutX="75.0" layoutY="194.0" prefHeight="18.0" prefWidth="38.0" text="Inv">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="StockField" layoutX="154.0" layoutY="190.0" />
-            <TextField fx:id="PriceField" layoutX="154.0" layoutY="232.0" />
+            <TextField fx:id="StockField" layoutX="170.0" layoutY="190.0" />
+            <TextField fx:id="PriceField" layoutX="170.0" layoutY="232.0" />
             <Label layoutX="74.0" layoutY="237.0" text="Price/Cost" />
-            <TextField fx:id="MaxField" layoutX="154.0" layoutY="277.0" />
+            <TextField fx:id="MaxField" layoutX="170.0" layoutY="277.0" />
             <Label layoutX="74.0" layoutY="282.0" text="Max" />
-            <Label layoutX="346.0" layoutY="282.0" text="Min" />
+            <Label layoutX="357.0" layoutY="282.0" text="Min" />
             <TextField fx:id="minField" layoutX="406.0" layoutY="277.0" />
             <Button layoutX="334.0" layoutY="392.0" mnemonicParsing="false" onAction="#onButtonSave" text="Save" />
             <Button layoutX="406.0" layoutY="392.0" mnemonicParsing="false" onAction="#onButtonCancel" text="Cancel" />
             <Label fx:id="partSource" layoutX="71.0" layoutY="334.0" text="Machine ID" />
-            <TextField fx:id="MachineId" layoutX="154.0" layoutY="330.0" />
+            <TextField fx:id="MachineId" layoutX="170.0" layoutY="330.0" />
          </children>
     </AnchorPane>
   </children>

@@ -16,13 +16,14 @@ import models.Part;
 import models.Product;
 
 import java.net.URL;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 import static controller.MainForm.inventory;
 
 public class AddProductForm implements Initializable {
     public TextField ProductId;
-
+    public int ID;
     public TextField ProductName;
     public TextField ProductStock;
     public TextField ProductPrice;
@@ -41,11 +42,13 @@ public class AddProductForm implements Initializable {
     public TableColumn<Part, Integer> tablePartId;
     public ObservableList<Part> partList;
     public ObservableList<Part> asPartList = FXCollections.observableArrayList();
+    public TextField partSearch;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        ProductId.setText(Integer.toString(inventory.getAllProducts().size() + 1) );
+        ID = getID();
+        ProductId.setText(Integer.toString(ID) );
 
 
 
@@ -55,11 +58,9 @@ public class AddProductForm implements Initializable {
         asPartStock.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
         asPartTable.setItems(partList);
 
-
-
-
-
     }
+
+
     public void onButtonCancel(ActionEvent actionEvent) {
 
         Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
@@ -93,7 +94,7 @@ public class AddProductForm implements Initializable {
             asPartList.add((Outsourced) PartTable.getSelectionModel().getSelectedItem());
         }
 
-        this.partList.remove(PartTable.getSelectionModel().getSelectedItem());
+
         PartTable.refresh();
         asPartTable.setItems(asPartList);
 
@@ -102,19 +103,28 @@ public class AddProductForm implements Initializable {
 
     public void OnButtonRemovePart(ActionEvent actionEvent) {
         if(asPartTable.getSelectionModel().getSelectedItem() != null){
-        if(asPartTable.getSelectionModel().getSelectedItem().getClass() == InHouse.class){
-            partList.add((InHouse) asPartTable.getSelectionModel().getSelectedItem());
-        }else{
-            partList.add((Outsourced) asPartTable.getSelectionModel().getSelectedItem());
+            this.asPartList.remove(asPartTable.getSelectionModel().getSelectedItem());
         }
 
-        this.asPartList.remove(asPartTable.getSelectionModel().getSelectedItem());
+
 
     }
-    }
 
+
+    public int getID(){
+
+        Random randID = new Random();
+        int id = randID.nextInt() * (32412 + inventory.getAllParts().size()) + 1 & Integer.MAX_VALUE;
+
+        if (inventory.lookupPart(id) == null){
+            return id;
+        }else{
+            getID();
+        }
+        return id;
+    }
     public void onButtonSaveProduct(ActionEvent actionEvent) {
-       Product newProduct = new Product(Integer.parseInt(ProductId.getText()),ProductName.getText(),Double.parseDouble(ProductPrice.getText()),Integer.parseInt(ProductStock.getText()),Integer.parseInt(ProductMin.getText()),Integer.parseInt(ProductMax.getText()));
+       Product newProduct = new Product(ID,ProductName.getText(),Double.parseDouble(ProductPrice.getText()),Integer.parseInt(ProductStock.getText()),Integer.parseInt(ProductMin.getText()),Integer.parseInt(ProductMax.getText()));
         for (Part part : asPartList) {
             newProduct.addAssociatedPart(part);
         }
