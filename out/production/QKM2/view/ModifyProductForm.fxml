@@ -36,7 +36,7 @@
             <TextField layoutX="154.0" layoutY="334.0" prefHeight="25.0" prefWidth="77.0" fx:id="ProductMax"/>
             <TextField layoutX="304.0" layoutY="333.0" prefHeight="25.0" prefWidth="77.0" fx:id="ProductMin"/>
             <Label layoutX="267.0" layoutY="337.0" text="Min" />
-            <TextField layoutX="745.0" layoutY="51.0" promptText="Search by Part ID or Name" />
+            <TextField layoutX="745.0" layoutY="51.0" promptText="Search by Part ID or Name" fx:id="partSearch" onAction="#onPartSearch"/>
             <TableView layoutX="500.0" layoutY="354.0" prefHeight="200.0" prefWidth="406.0" fx:id="asPartTable">
                <columns>
                   <TableColumn prefWidth="75.0" text="Part ID" fx:id="asPartID"/>

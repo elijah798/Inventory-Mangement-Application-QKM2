@@ -82,7 +82,7 @@
                         <Font name="Arial Black" size="14.0" />
                      </font>
                   </Label>
-                  <TextField layoutX="212.0" layoutY="12.0" prefHeight="26.0" prefWidth="201.0" promptText="Search by Product ID or Name" />
+                  <TextField layoutX="212.0" layoutY="12.0" prefHeight="26.0" prefWidth="201.0" promptText="Search by Product ID or Name" fx:id="productSearchBar" onAction="#onProductSearchEntry"/>
                   <TableView layoutX="18.0" layoutY="44.0" prefHeight="175.0" prefWidth="395.0" fx:id="productTable">
                      <columns>
                         <TableColumn prefWidth="75.0" text="Product ID" fx:id="tableProductId"/>

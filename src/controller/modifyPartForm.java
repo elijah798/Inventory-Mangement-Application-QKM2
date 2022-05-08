@@ -93,38 +93,43 @@ public class modifyPartForm implements Initializable {
     public boolean validate() {
         Alert alert = new Alert(Alert.AlertType.NONE);
 
-
-        if (inHouse.isSelected() && !MachineId.getText().matches("[0-9]+")) {
+        if(NameField.getText().isEmpty()){
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setContentText("Please enter valid Name");
+            alert.show();
+            return false;
+        }
+        if (inHouse.isSelected() && !MachineId.getText().matches("\\d+")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter a number for machine ID");
             alert.show();
             return false;
         }
-        if (outSourced.isSelected() && !MachineId.getText().matches("[A-Z]+")) {
+        if (outSourced.isSelected() && MachineId.getText().isEmpty()) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter an appropriate Company Name");
             alert.show();
             return false;
         }
-        if (!PriceField.getText().matches("^[0-9]+([,.][0-9]?)?$")) {
+        if (!PriceField.getText().matches("^\\d+([,.]\\d?)?$")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter Valid price.");
             alert.show();
             return false;
         }
-        if (!StockField.getText().matches("[0-9]+")) {
+        if (!StockField.getText().matches("\\d+")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter a valid Number");
             alert.show();
             return false;
         }
-        if (!MaxField.getText().matches("[0-9]+")) {
+        if (!MaxField.getText().matches("\\d+")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter a valid Number");
             alert.show();
             return false;
         }
-        if (!minField.getText().matches("[0-9]+")) {
+        if (!minField.getText().matches("\\d+")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please Enter a valid number.");
             alert.show();
@@ -132,7 +137,7 @@ public class modifyPartForm implements Initializable {
         }
 
 
-        if (Integer.parseInt(minField.getText()) > Integer.parseInt(minField.getText()) || (Integer.parseInt(StockField.getText()) < Integer.parseInt(minField.getText()) || Integer.parseInt(StockField.getText()) > Integer.parseInt(MaxField.getText()))) {
+        if (Integer.parseInt(minField.getText()) > Integer.parseInt(MaxField.getText()) || (Integer.parseInt(StockField.getText()) < Integer.parseInt(minField.getText()) || Integer.parseInt(StockField.getText()) > Integer.parseInt(MaxField.getText()))) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please check the amounts on your inventory, Max Inventory, and Minimum Inventory. Inventory should be between Maximum and Minimum amounts.");
             alert.show();
@@ -142,18 +147,17 @@ public class modifyPartForm implements Initializable {
     }
     public void onButtonSave(ActionEvent actionEvent){
         Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
-
-        if(outSourced.isSelected() && validate()){
-            Part part1 = new Outsourced(Integer.parseInt(Id.getText()),NameField.getText(),Double.parseDouble(PriceField.getText()) ,Integer.parseInt(StockField.getText()),Integer.parseInt(minField.getText()),Integer.parseInt(MaxField.getText()),MachineId.getText());
-            inventory.updatePart(indexOfPart,part1);
-            stage.hide();
-        }else if(validate()){
-            Part part1 = new InHouse(Integer.parseInt(Id.getText()),NameField.getText(),Double.parseDouble(PriceField.getText()) ,Integer.parseInt(StockField.getText()),Integer.parseInt(minField.getText()),Integer.parseInt(MaxField.getText()),Integer.parseInt(MachineId.getText()));
-            inventory.updatePart(indexOfPart,part1);
-            stage.hide();
+        if(validate()){
+            if(outSourced.isSelected()){
+                Part part1 = new Outsourced(Integer.parseInt(Id.getText()),NameField.getText(),Double.parseDouble(PriceField.getText()) ,Integer.parseInt(StockField.getText()),Integer.parseInt(minField.getText()),Integer.parseInt(MaxField.getText()),MachineId.getText());
+                inventory.updatePart(indexOfPart,part1);
+                stage.hide();
+            }else{
+                Part part1 = new InHouse(Integer.parseInt(Id.getText()),NameField.getText(),Double.parseDouble(PriceField.getText()) ,Integer.parseInt(StockField.getText()),Integer.parseInt(minField.getText()),Integer.parseInt(MaxField.getText()),Integer.parseInt(MachineId.getText()));
+                inventory.updatePart(indexOfPart,part1);
+                stage.hide();
+            }
         }
-
-
 
     }
 }

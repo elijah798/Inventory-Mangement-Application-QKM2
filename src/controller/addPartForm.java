@@ -77,38 +77,43 @@ public class addPartForm implements Initializable {
     public boolean validate(){
     Alert alert = new Alert(Alert.AlertType.NONE);
 
-
-        if (inHouse.isSelected() && !MachineId.getText().matches("[0-9]+")) {
+        if(NameField.getText().isEmpty()){
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setContentText("Please enter valid Name");
+            alert.show();
+            return false;
+        }
+        if (inHouse.isSelected() && !MachineId.getText().matches("\\d+")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter a number for machine ID");
             alert.show();
             return false;
         }
-        if (outSourced.isSelected() && !MachineId.getText().matches("[A-Z]+")) {
+        if (outSourced.isSelected() && MachineId.getText().isEmpty()) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter an appropriate Company Name");
             alert.show();
             return false;
         }
-        if (!PriceField.getText().matches("^[0-9]+([,.][0-9]?)?$")) {
+        if (!PriceField.getText().matches("^\\d+([,.]\\d?)?$")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter Valid price.");
             alert.show();
             return false;
         }
-        if (!StockField.getText().matches("[0-9]+")) {
+        if (!StockField.getText().matches("\\d+")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter a valid Number");
             alert.show();
             return false;
         }
-        if (!MaxField.getText().matches("[0-9]+")) {
+        if (!MaxField.getText().matches("\\d+")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please enter a valid Number");
             alert.show();
             return false;
         }
-        if (!minField.getText().matches("[0-9]+")) {
+        if (!minField.getText().matches("\\d+")) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please Enter a valid number.");
             alert.show();
@@ -116,7 +121,7 @@ public class addPartForm implements Initializable {
         }
 
 
-        if (Integer.parseInt(minField.getText()) > Integer.parseInt(minField.getText()) || (Integer.parseInt(StockField.getText()) < Integer.parseInt(minField.getText()) || Integer.parseInt(StockField.getText()) > Integer.parseInt(MaxField.getText()))) {
+        if (Integer.parseInt(minField.getText()) > Integer.parseInt(MaxField.getText()) || (Integer.parseInt(StockField.getText()) < Integer.parseInt(minField.getText()) || Integer.parseInt(StockField.getText()) > Integer.parseInt(MaxField.getText()))) {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("Please check the amounts on your inventory, Max Inventory, and Minimum Inventory. Inventory should be between Maximum and Minimum amounts.");
             alert.show();

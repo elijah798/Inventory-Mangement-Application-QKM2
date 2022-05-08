@@ -9,9 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import models.*;
@@ -42,9 +40,9 @@ public class MainForm implements Initializable{
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        InHouse part1 = new InHouse(1,"part1",2.0,3,1,4,1);
-        InHouse part2 = new InHouse(2,"part2",1.0,1,3,9,2);
-        InHouse part3 = new InHouse(3,"part3",1.5,6,0,1,3);
+        Part part1 = new InHouse(1,"part1",2.0,3,1,4,1);
+        Part part2 = new InHouse(2,"part2",1.0,1,3,9,2);
+        Part part3 = new InHouse(3,"part3",1.5,6,0,1,3);
 
         Product Product1 = new Product(1,"Company 1", 200.0, 1, 1,5);
 
@@ -122,17 +120,19 @@ public class MainForm implements Initializable{
 
     public void onButtonDeletePart(ActionEvent actionEvent) {
 
-        if(!inventory.getAllParts().isEmpty()){
+        if(!inventory.getAllParts().isEmpty() && partTable.getSelectionModel().getSelectedItem() != null){
+            Alert alert = new Alert(Alert.AlertType.NONE,"Delete " + partTable.getSelectionModel().getSelectedItem().getName() + " from part?", ButtonType.YES, ButtonType.NO);
+            alert.showAndWait();
+            if(alert.getResult() == ButtonType.YES) {
+                System.out.println("Removing " + partTable.getSelectionModel().getSelectedItem().getName());
+                inventory.updatePart(inventory.getAllParts().indexOf(partTable.getSelectionModel().getSelectedItem()) ,null);
+                System.out.println("Table refreshed");
+            }
+        }else {
+            Alert alert = new Alert(Alert.AlertType.NONE,"No Product Selected", ButtonType.CLOSE);
 
-            System.out.println("Removing " + partTable.getSelectionModel().getSelectedItem().getName());
-            inventory.updatePart(inventory.getAllParts().indexOf(partTable.getSelectionModel().getSelectedItem()) ,null);
-
-            System.out.println("Table refreshed");
-        }else{
-            System.out.println("Table is Empty");
+            alert.show();
         }
-
-
     }
 
 
@@ -150,7 +150,7 @@ public class MainForm implements Initializable{
                 partTable.setItems(inventory.getAllParts());
                 partTable.refresh();
 
-        } else if(PartSearchBar.getText().matches("[0-9]+") && inventory.lookupPart(Integer.parseInt(PartSearchBar.getText())) != null){
+        } else if(PartSearchBar.getText().matches("\\d+") && inventory.lookupPart(Integer.parseInt(PartSearchBar.getText())) != null){
             String searchTerm = PartSearchBar.getText();
             for (Part Parts: inventory.getAllParts()){
                 if (Integer.toString(Parts.getId()).startsWith(PartSearchBar.getText())){
@@ -203,18 +203,19 @@ public class MainForm implements Initializable{
     }
 
     public void onButtonProductDeletePart(ActionEvent actionEvent) {
-        productTable.setItems(inventory.getAllProducts());
+        if(!inventory.getAllProducts().isEmpty() && productTable.getSelectionModel().getSelectedItem() != null){
+            Alert alert = new Alert(Alert.AlertType.NONE,"Delete " + productTable.getSelectionModel().getSelectedItem().getName() + " from Product inventory?", ButtonType.YES, ButtonType.NO);
+            alert.showAndWait();
+            if(alert.getResult() == ButtonType.YES) {
+                System.out.println("Removing " + productTable.getSelectionModel().getSelectedItem().getName());
+                inventory.updateProduct(inventory.getAllProducts().indexOf(productTable.getSelectionModel().getSelectedItem()) ,null);
+                System.out.println("Table refreshed");
+            }
+        }else {
+            Alert alert = new Alert(Alert.AlertType.NONE,"No Product Selected", ButtonType.CLOSE);
 
-        if(!inventory.getAllProducts().isEmpty()){
-            System.out.println("Removing " + productTable.getSelectionModel().getSelectedItem().getName());
-            inventory.updateProduct(inventory.getAllProducts().indexOf(productTable.getSelectionModel().getSelectedItem()) ,null);
-
-        }else{
-
-            System.out.println("Table is Empty");
-
+            alert.show();
         }
-
     }
 
     public void onProductSearchEntry(ActionEvent actionEvent) {
@@ -231,7 +232,7 @@ public class MainForm implements Initializable{
             productTable.setItems(inventory.getAllProducts());
             productTable.refresh();
 
-        } else if(productSearchBar.getText().matches("[0-9]+") && inventory.lookupProduct(Integer.parseInt(productSearchBar.getText())) != null){
+        } else if(productSearchBar.getText().matches("\\d+") && inventory.lookupProduct(Integer.parseInt(productSearchBar.getText())) != null){
             String searchTerm = productSearchBar.getText();
             for (Product Products: inventory.getAllProducts()){
                 if (Integer.toString(Products.getId()).startsWith(productSearchBar.getText())){
