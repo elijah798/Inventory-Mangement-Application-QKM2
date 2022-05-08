@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 
 import static controller.MainForm.inventory;
 
+@SuppressWarnings("ALL")
 public class AddProductForm implements Initializable {
     public TextField ProductId;
     public int ID;
@@ -136,43 +137,48 @@ public class AddProductForm implements Initializable {
     }
 
     public boolean validate(){
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        if(ProductName.getText().isEmpty()){
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter valid Name");
+
+        if(ProductName.getText().isEmpty() || ProductName.getText().matches("\\d+")){
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter valid Name.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!ProductPrice.getText().matches("^\\d+([,.]\\d?)?$")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter Valid price.");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid price.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!ProductStock.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter a valid Number");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid inventory amount.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!ProductMax.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter a valid Number");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid Maximum Amount.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!ProductMin.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please Enter a valid number.");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid Minimum Amount.", ButtonType.CLOSE);
+
             alert.show();
             return false;
         }
 
 
         if (Integer.parseInt(ProductMin.getText()) > Integer.parseInt(ProductMax.getText()) || (Integer.parseInt(ProductStock.getText()) < Integer.parseInt(ProductMin.getText()) || Integer.parseInt(ProductStock.getText()) > Integer.parseInt(ProductMax.getText()))) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please check the amounts on your stock inventory, Max Inventory, and Minimum Inventory. Inventory should be between Maximum and Minimum amounts.");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please check the amounts on your inventory, Max Inventory, and Minimum Inventory. Inventory should be between Maximum and Minimum amounts.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
 
@@ -198,33 +204,44 @@ public class AddProductForm implements Initializable {
 
 
         //test for valid entry
-        if(partSearch.getText().isEmpty()){
+        if (partSearch.getText().isEmpty()) {
 
             PartTable.setItems(null);
             PartTable.setItems(inventory.getAllParts());
             PartTable.refresh();
 
-        } else if(partSearch.getText().matches("\\d+") && inventory.lookupPart(Integer.parseInt(partSearch.getText())) != null){
+        } else if (partSearch.getText().matches("\\d+")) {
             String searchTerm = partSearch.getText();
-            for (Part Parts: inventory.getAllParts()){
-                if (Integer.toString(Parts.getId()).startsWith(partSearch.getText())){
+            for (Part Parts : inventory.getAllParts()) {
+                if (Integer.toString(Parts.getId()).contains(partSearch.getText())) {
                     searchResults.add(Parts);
                 }
+            }
+            if (searchResults.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.NONE, "No part with name/ID of " + partSearch.getText(), ButtonType.CLOSE);
+
+                alert.show();
             }
 
             PartTable.setItems(searchResults);
 
 
-        } else  {
-            for (Part Parts: inventory.getAllParts()){
-                if (Parts.getName().toLowerCase().startsWith(partSearch.getText().toLowerCase())){
+        } else if(!partSearch.getText().matches("\\d+")) {
+            for (Part Parts : inventory.getAllParts()) {
+                if (Parts.getName().toLowerCase().contains(partSearch.getText().toLowerCase())) {
                     searchResults.add(Parts);
                 }
             }
+            if (searchResults.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.NONE, "No part with name/ID of " + partSearch.getText(), ButtonType.CLOSE);
+
+                alert.show();
+            }
+
+
             PartTable.setItems(searchResults);
 
         }
-
 
     }
 }

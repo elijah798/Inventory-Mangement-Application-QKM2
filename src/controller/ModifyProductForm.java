@@ -14,6 +14,7 @@ import models.Product;
 
 import static controller.MainForm.inventory;
 
+@SuppressWarnings("ALL")
 public class ModifyProductForm {
 
     public Product product;
@@ -56,7 +57,7 @@ public class ModifyProductForm {
 
     public void OnButtonRemovePart(ActionEvent actionEvent) {
         if(!inventory.getAllProducts().isEmpty() && asPartTable.getSelectionModel().getSelectedItem() != null){
-            Alert alert = new Alert(Alert.AlertType.NONE,"remove " + asPartTable.getSelectionModel().getSelectedItem().getClass() + " from associated parts?", ButtonType.YES, ButtonType.NO);
+            Alert alert = new Alert(Alert.AlertType.NONE,"remove from associated parts?", ButtonType.YES, ButtonType.NO);
             alert.showAndWait();
             if(alert.getResult() == ButtonType.YES) {
 
@@ -70,43 +71,48 @@ public class ModifyProductForm {
         }
     }
     public boolean validate(){
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        if(ProductName.getText().isEmpty()){
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter valid Name");
+
+        if(ProductName.getText().isEmpty() || ProductName.getText().matches("\\d+")){
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter valid Name.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!ProductPrice.getText().matches("^\\d+([,.]\\d?)?$")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter Valid price.");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid price.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!ProductStock.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter a valid Number");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid inventory amount.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!ProductMax.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter a valid Number");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid Maximum Amount.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!ProductMin.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please Enter a valid number.");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid Minimum Amount.", ButtonType.CLOSE);
+
             alert.show();
             return false;
         }
 
 
         if (Integer.parseInt(ProductMin.getText()) > Integer.parseInt(ProductMax.getText()) || (Integer.parseInt(ProductStock.getText()) < Integer.parseInt(ProductMin.getText()) || Integer.parseInt(ProductStock.getText()) > Integer.parseInt(ProductMax.getText()))) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please check the amounts on your stock inventory, Max Inventory, and Minimum Inventory. Inventory should be between Maximum and Minimum amounts.");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please check the amounts on your inventory, Max Inventory, and Minimum Inventory. Inventory should be between Maximum and Minimum amounts.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
 
@@ -117,6 +123,7 @@ public class ModifyProductForm {
 
         if(validate()) {
             product.setName(ProductName.getText());
+            System.out.println("Modified Product name is " + product.getName());
             product.setStock(Integer.parseInt(ProductStock.getText()));
             product.setMax(Integer.parseInt(ProductMax.getText()));
             product.setMin(Integer.parseInt(ProductMin.getText()));
@@ -195,12 +202,17 @@ public class ModifyProductForm {
                 PartTable.setItems(inventory.getAllParts());
                 PartTable.refresh();
 
-            } else if(partSearch.getText().matches("\\d+") && inventory.lookupPart(Integer.parseInt(partSearch.getText())) != null){
+            } else if(partSearch.getText().matches("\\d+")){
                 String searchTerm = partSearch.getText();
                 for (Part Parts: inventory.getAllParts()){
                     if (Integer.toString(Parts.getId()).startsWith(partSearch.getText())){
                         searchResults.add(Parts);
                     }
+                }
+                if (searchResults.isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.NONE, "No part with name/ID of " + partSearch.getText(), ButtonType.CLOSE);
+
+                    alert.show();
                 }
 
                 PartTable.setItems(searchResults);
@@ -211,6 +223,11 @@ public class ModifyProductForm {
                     if (Parts.getName().toLowerCase().startsWith(partSearch.getText().toLowerCase())){
                         searchResults.add(Parts);
                     }
+                }
+                if (searchResults.isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.NONE, "No part with name/ID of " + partSearch.getText(), ButtonType.CLOSE);
+
+                    alert.show();
                 }
                 PartTable.setItems(searchResults);
 

@@ -1,7 +1,6 @@
 package controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -48,14 +47,11 @@ public class addPartForm implements Initializable {
         ID = getID();
         IdField.setText(Integer.toString(ID) );
 
-        TG.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> observableValue, Toggle toggle, Toggle t1) {
-                if(inHouse.isSelected()){
-                    partSource.setText("MachineId");
-                }else{
-                    partSource.setText("Company Name");
-                }
+        TG.selectedToggleProperty().addListener((observableValue, toggle, t1) -> {
+            if(inHouse.isSelected()){
+                partSource.setText("MachineId");
+            }else{
+                partSource.setText("Company Name");
             }
         });
 
@@ -75,60 +71,66 @@ public class addPartForm implements Initializable {
     }
 
     public boolean validate(){
-    Alert alert = new Alert(Alert.AlertType.NONE);
 
-        if(NameField.getText().isEmpty()){
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter valid Name");
+
+        if(NameField.getText().isEmpty() || NameField.getText().matches("\\d+")){
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter valid Name.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (inHouse.isSelected() && !MachineId.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter a number for machine ID");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid number for Machine ID", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (outSourced.isSelected() && MachineId.getText().isEmpty()) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter an appropriate Company Name");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid Company Name.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!PriceField.getText().matches("^\\d+([,.]\\d?)?$")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter Valid price.");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid price.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!StockField.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter a valid Number");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid inventory amount.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!MaxField.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please enter a valid Number");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid Maximum Amount.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
         if (!minField.getText().matches("\\d+")) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please Enter a valid number.");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please enter a valid Minimum Amount.", ButtonType.CLOSE);
+
             alert.show();
             return false;
         }
 
 
         if (Integer.parseInt(minField.getText()) > Integer.parseInt(MaxField.getText()) || (Integer.parseInt(StockField.getText()) < Integer.parseInt(minField.getText()) || Integer.parseInt(StockField.getText()) > Integer.parseInt(MaxField.getText()))) {
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setContentText("Please check the amounts on your inventory, Max Inventory, and Minimum Inventory. Inventory should be between Maximum and Minimum amounts.");
+            Alert alert = new Alert(Alert.AlertType.NONE,"Please check the amounts on your inventory, Max Inventory, and Minimum Inventory. Inventory should be between Maximum and Minimum amounts.", ButtonType.CLOSE);
+
             alert.show();
+
             return false;
         }
-
-    return true;
+        return true;
     }
 
     public void onButtonSave(ActionEvent actionEvent){

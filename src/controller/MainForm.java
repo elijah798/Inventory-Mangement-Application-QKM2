@@ -2,12 +2,12 @@ package controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
+
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -16,11 +16,12 @@ import models.*;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Locale;
+
 import java.util.ResourceBundle;
 
 
 
+@SuppressWarnings("ALL")
 public class MainForm implements Initializable{
 
     public static Inventory inventory = new Inventory();
@@ -40,26 +41,26 @@ public class MainForm implements Initializable{
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        Part part1 = new InHouse(1,"part1",2.0,3,1,4,1);
-        Part part2 = new InHouse(2,"part2",1.0,1,3,9,2);
-        Part part3 = new InHouse(3,"part3",1.5,6,0,1,3);
+//        Part part1 = new InHouse(1,"part1",2.0,3,1,4,1);
+//        Part part2 = new InHouse(2,"part2",1.0,1,3,9,2);
+//        Part part3 = new InHouse(3,"part3",1.5,6,0,1,3);
+//
+//        Product Product1 = new Product(1,"Company 1", 200.0, 1, 1,5);
+//
+//        Product Product2 = new Product(2,"Company 2", 20.0, 2, 2,12);
+//
+//        Product Product3 = new Product(3,"Company 3", 2.0, 3, 5,50);
 
-        Product Product1 = new Product(1,"Company 1", 200.0, 1, 1,5);
-
-        Product Product2 = new Product(2,"Company 2", 20.0, 2, 2,12);
-
-        Product Product3 = new Product(3,"Company 3", 2.0, 3, 5,50);
 
 
-
-        System.out.println("Product3 has parts: " + Product3.getAllAssociatedParts());
-        inventory.addPart(part1);
-        inventory.addPart(part2);
-        inventory.addPart(part3);
-
-        inventory.addProduct(Product1);
-        inventory.addProduct(Product2);
-        inventory.addProduct(Product3);
+        //System.out.println("Product3 has parts: " + Product3.getAllAssociatedParts());
+//        inventory.addPart(part1);
+//        inventory.addPart(part2);
+//        inventory.addPart(part3);
+//
+//        inventory.addProduct(Product1);
+//        inventory.addProduct(Product2);
+//        inventory.addProduct(Product3);
 
 
         System.out.println("I am Initialized");
@@ -150,12 +151,17 @@ public class MainForm implements Initializable{
                 partTable.setItems(inventory.getAllParts());
                 partTable.refresh();
 
-        } else if(PartSearchBar.getText().matches("\\d+") && inventory.lookupPart(Integer.parseInt(PartSearchBar.getText())) != null){
+        } else if(PartSearchBar.getText().matches("\\d+")){
             String searchTerm = PartSearchBar.getText();
             for (Part Parts: inventory.getAllParts()){
                 if (Integer.toString(Parts.getId()).startsWith(PartSearchBar.getText())){
                     searchResults.add(Parts);
                 }
+            }
+            if (searchResults.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.NONE, "No part with name/ID of " + PartSearchBar.getText(), ButtonType.CLOSE);
+
+                alert.show();
             }
 
             partTable.setItems(searchResults);
@@ -166,6 +172,11 @@ public class MainForm implements Initializable{
                 if (Parts.getName().toLowerCase().startsWith(PartSearchBar.getText().toLowerCase())){
                     searchResults.add(Parts);
                 }
+            }
+            if (searchResults.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.NONE, "No part with name/ID of " + PartSearchBar.getText(), ButtonType.CLOSE);
+
+                alert.show();
             }
             partTable.setItems(searchResults);
 
@@ -204,12 +215,17 @@ public class MainForm implements Initializable{
 
     public void onButtonProductDeletePart(ActionEvent actionEvent) {
         if(!inventory.getAllProducts().isEmpty() && productTable.getSelectionModel().getSelectedItem() != null){
+            if(productTable.getSelectionModel().getSelectedItem().getAllAssociatedParts().size() > 0){
+                Alert alert = new Alert(Alert.AlertType.NONE,"Cant delete while product has associated parts.", ButtonType.CLOSE);
+                alert.show();
+            }else{
             Alert alert = new Alert(Alert.AlertType.NONE,"Delete " + productTable.getSelectionModel().getSelectedItem().getName() + " from Product inventory?", ButtonType.YES, ButtonType.NO);
             alert.showAndWait();
             if(alert.getResult() == ButtonType.YES) {
                 System.out.println("Removing " + productTable.getSelectionModel().getSelectedItem().getName());
                 inventory.updateProduct(inventory.getAllProducts().indexOf(productTable.getSelectionModel().getSelectedItem()) ,null);
                 System.out.println("Table refreshed");
+            }
             }
         }else {
             Alert alert = new Alert(Alert.AlertType.NONE,"No Product Selected", ButtonType.CLOSE);
@@ -232,14 +248,18 @@ public class MainForm implements Initializable{
             productTable.setItems(inventory.getAllProducts());
             productTable.refresh();
 
-        } else if(productSearchBar.getText().matches("\\d+") && inventory.lookupProduct(Integer.parseInt(productSearchBar.getText())) != null){
+        } else if(productSearchBar.getText().matches("\\d+")){
             String searchTerm = productSearchBar.getText();
             for (Product Products: inventory.getAllProducts()){
                 if (Integer.toString(Products.getId()).startsWith(productSearchBar.getText())){
                     searchResults.add(Products);
                 }
             }
+            if (searchResults.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.NONE, "No part with name/ID of " + PartSearchBar.getText(), ButtonType.CLOSE);
 
+                alert.show();
+            }
             productTable.setItems(searchResults);
 
 
@@ -248,6 +268,11 @@ public class MainForm implements Initializable{
                 if (Products.getName().toLowerCase().startsWith(productSearchBar.getText().toLowerCase())){
                     searchResults.add(Products);
                 }
+            }
+            if (searchResults.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.NONE, "No part with name/ID of " + PartSearchBar.getText(), ButtonType.CLOSE);
+
+                alert.show();
             }
             productTable.setItems(searchResults);
 
